@@ -1,0 +1,94 @@
+/*
+ * DATEBASE CREATION DEMO ON SQL FIDDLE FOR JAUNTY COFFEE CO.
+ * AUTHER : LOUIS WONG
+ */
+
+/* ON SQL FIDDLE BUILD SCHEMA PANEL */
+-- Create the database with all table. (screenshot1) --
+CREATE TABLE EMPLOYEE(
+  employee_id INT,
+  first_name VARCHAR(30),
+  last_name VARCHAR(30),
+  hire_date DATE,
+  job_title VARCHAR(30),
+  shop_id INT,
+  PRIMARY KEY (employee_id)
+  );
+  
+CREATE TABLE COFFEE_SHOP(
+  shop_id INT,
+  shop_name VARCHAR(50),
+  city VARCHAR(50),
+  state CHAR(2),
+  PRIMARY KEY (shop_id)
+  );
+
+CREATE TABLE COFFEE(
+  coffee_id INT,
+  shop_id INT,
+  supplier_id INT,
+  coffee_name VARCHAR(50),
+  price_per_pound NUMERIC(5,2),
+  PRIMARY KEY (coffee_id)
+  );
+
+CREATE TABLE SUPPLIER(
+  supplier_id INT,
+  company_name VARCHAR(50),
+  country VARCHAR(30),
+  sale_contact_name VARCHAR(60),
+  email VARCHAR(50) NOT NULL,
+  PRIMARY KEY (supplier_id)
+  );
+
+ALTER TABLE EMPLOYEE
+ADD FOREIGN KEY (shop_id) REFERENCES COFFEE_SHOP(shop_id);
+
+ALTER TABLE COFFEE
+ADD FOREIGN KEY (shop_id) REFERENCES COFFEE_SHOP(shop_id),
+ADD FOREIGN KEY (supplier_id) REFERENCES SUPPLIER(supplier_id);
+
+-- Provide the SQL code you wrote to populate the tables with at least three rows of data in each table. (screenshot2) --
+INSERT INTO COFFEE_SHOP (shop_id, shop_name, city, state)
+VALUES (100, 'Jaunty_Coffee_LA', 'Los Angeles', 'CA'),
+       (101, 'Jaunty_Coffee_SF', 'San Francico', 'CA'),
+       (102, 'Jaunty_Coffee_SD', 'San Diego', 'CA');
+
+INSERT INTO EMPLOYEE (employee_id, first_name, last_name, hire_date, job_title, shop_id)
+VALUES (1, 'John', 'Connor', '1985-02-28', 'Cashier', 100),
+       (2, 'Sarah', 'Connor', '1964-02-28', 'Assistant Store Manager', 101),
+       (3, 'Lux', 'Luthor', '1972-07-11', 'Production Manager', 102);
+
+INSERT INTO SUPPLIER (supplier_id, company_name, country, sale_contact_name, email)
+VALUES (1000, 'Best_Coffee_Distribution', 'USA', 'Arnold', 'arnold@bcf.com'),
+       (1001, 'Coffee_Global', 'Italy', 'Sylvester', 'sylvester@coffeeglobal.com'),
+       (1002, 'Coffee_Bean_Export', 'Colombia', 'Bruce', 'bruce@coffeebeanexport.com');
+
+INSERT INTO COFFEE (coffee_id, shop_id, supplier_id, coffee_name, price_per_pound)
+VALUES (500, 100, 1000, 'Cold Brew Expresso', 7.50),
+       (501, 101, 1001, 'Italy Expresso', 10.50),
+       (502, 102, 1002, 'Colombia Expresso', 12.50);
+
+-- Create a view with full name & replace first and last name on “Employee” table. (screenshot3) --
+CREATE VIEW EMPLOYEE_FULL_NAME AS
+SELECT concat(first_name, ' ' , last_name) AS employee_full_name, employee_id, hire_date, job_title, shop_id
+FROM EMPLOYEE;
+
+-- Create index on the coffee_name on “Coffee” table. (screenshot4) --
+CREATE INDEX idx_coffee_name
+ON COFFEE (coffee_name);
+
+
+/* ON SQL FIDDLE QUERY PANEL */
+-- Create a any SELECT–FROM–WHERE query on any table. (screenshot5) --
+SELECT *
+FROM EMPLOYEE
+WHERE last_name = 'Connor';
+
+-- Create a JOIN query all columns with 3 different table. (screenshot6) --
+SELECT *
+FROM EMPLOYEE
+INNER JOIN COFFEE_SHOP 
+ON EMPLOYEE.shop_id = COFFEE_SHOP.shop_id
+INNER JOIN COFFEE
+ON COFFEE_SHOP.shop_id = COFFEE.shop_id
